@@ -1,4 +1,5 @@
 const electron = require('electron');
+const readData = require('./src/readData');
 
 const { app, BrowserWindow, TouchBar } = require('electron');
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
@@ -94,6 +95,11 @@ const touchBar = new TouchBar([
 ]);
 
 function createWindow() {
+
+    const data = readData('data.txt');
+
+    data.forEach(curr => console.log(`${curr.date} ${curr.weight} ${curr.comment}`));
+
     // Create the browser window.
     win = new BrowserWindow({ width: 800, height: 600 });
 
