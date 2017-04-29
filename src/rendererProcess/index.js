@@ -1,30 +1,59 @@
 const Highcharts = require('highcharts');
 const ipcRenderer = require('electron').ipcRenderer;
 ipcRenderer.on('data', function (event, data) {
-    console.log(data);
+    renderChart(data);
 });
 
-Highcharts.chart('container', {
-    chart: {
-        type: 'bar'
-    },
-    title: {
-        text: 'Fruit Consumption'
-    },
-    xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges']
-    },
-    yAxis: {
+function renderChart(data) {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'spline'
+        },
         title: {
-            text: 'Fruit eaten'
-        }
-    },
-    series: [{
-        name: 'Jane',
-        data: [1, 0, 4]
-    }, {
-        name: 'John',
-        data: [5, 7, 3]
-    }]
-});
+            text: 'Weight 2017'
+        },
+        subtitle: {
+            text: 'You can do it!'
+        },
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                millisecond: '%H:%M:%S.%L',
+                second: '%H:%M:%S',
+                minute: '%H:%M',
+                hour: '%H:%M',
+                day: '%e. %b',
+                week: '%e. %b',
+                month: '%b \'%y',
+                year: '%Y'
+            },
+            title: {
+                text: 'Date'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Weight (kg)'
+            },
+            min: 82
+        },
+        tooltip: {
+            headerFormat: '<b>{series.name}</b><br>',
+            pointFormat: '{point.x:%e. %b}: {point.y:.2f} kg'
+        },
+
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+
+        series: [{
+            name: 'Daily Measurements',
+            data: data.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)])
+        }]
+    });
+}
 
