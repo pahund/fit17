@@ -1,5 +1,5 @@
 const electron = require('electron');
-const readData = require('./src/readData');
+const readData = require('./src/mainProcess/readData');
 
 const { app, BrowserWindow, TouchBar } = require('electron');
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
@@ -96,12 +96,12 @@ const touchBar = new TouchBar([
 
 function createWindow() {
 
-    const data = readData('data.txt');
+    const data = readData(path.join(__dirname, 'data.txt'));
 
     data.forEach(curr => console.log(`${curr.date} ${curr.weight} ${curr.comment}`));
 
     // Create the browser window.
-    win = new BrowserWindow({ width: 800, height: 600 });
+    win = new BrowserWindow({ width: 800, height: 600, show: false });
 
     // and load the index.html of the app.
     win.loadURL(url.format({
@@ -122,6 +122,11 @@ function createWindow() {
     });
 
     win.setTouchBar(touchBar);
+
+    win.once('ready-to-show', () => {
+        win.webContents.send('data', data);
+        win.show();
+    })
 }
 
 // This method will be called when Electron has finished
