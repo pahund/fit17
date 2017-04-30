@@ -1,14 +1,15 @@
 const ipcRenderer = require('electron').ipcRenderer;
-ipcRenderer.on('data', function (event, rawData) {
-    renderChart(rawData);
-});
+ipcRenderer.on('data', (event, rawData) => renderChart(rawData));
 
-const Highcharts = require('highcharts');
-const { fitData } = require('./utils/regression');
+window.Highcharts = require('highcharts');
+require('../vendor/technical-indicators.src');
+
+function prepareData(rawData) {
+   return rawData.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)]);
+}
 
 function renderChart(rawData) {
-    const measurementsData = rawData.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)]);
-    const { data: trendData } = fitData(measurementsData, 'exp');
+    const data = prepareData(rawData);
     Highcharts.chart('container', {
         chart: {
             type: 'spline'
@@ -56,12 +57,28 @@ function renderChart(rawData) {
 
         series: [{
             name: 'Daily Measurements',
-            data: measurementsData
+            data,
+            id: 'primary'
+        }, {
+            name: 'Average (4 weeks)',
+            linkedTo: 'primary',
+            showInLegend: true,
+            type: 'trendline',
+            algorithm: 'SMA',
+            periods: 28
+        }, {
+            name: 'Average (1 week)',
+            linkedTo: 'primary',
+            showInLegend: true,
+            type: 'trendline',
+            algorithm: 'SMA',
+            periods: 7
         }, {
             name: 'Trend',
-            type: 'line',
-            marker: { enabled: false },
-            data: trendData
+            linkedTo: 'primary',
+            showInLegend: true,
+            type: 'trendline',
+            algorithm: 'linear'
         }]
     });
 }
