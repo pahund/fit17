@@ -7,7 +7,8 @@ const Highcharts = require('highcharts');
 const { fitData } = require('./utils/regression');
 
 function renderChart(rawData) {
-    const data = rawData.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)]);
+    const measurementsData = rawData.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)]);
+    const { data: trendData } = fitData(measurementsData, 'exp');
     Highcharts.chart('container', {
         chart: {
             type: 'spline'
@@ -55,14 +56,12 @@ function renderChart(rawData) {
 
         series: [{
             name: 'Daily Measurements',
-            data
+            data: measurementsData
         }, {
             name: 'Trend',
             type: 'line',
             marker: { enabled: false },
-            data: (function() {
-                return fitData(data).data;
-            })()
+            data: trendData
         }]
     });
 }

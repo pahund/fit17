@@ -11,8 +11,7 @@
  *
  **/
 
-function regression(x, y, typ) {
-    const type = (typ === null) ? 'linear' : typ;
+function regression(x, y, type = 'linear') {
     let N = x.length;
     let slope;
     let intercept;
@@ -39,6 +38,8 @@ function regression(x, y, typ) {
                 Y.push(Math.log(y[i]));
             }
         }
+    } else {
+        throw new Error(`Type ${type} is not supported by the regression module`);
     }
 
     for (let i = 0; i < N; i++) {
@@ -52,19 +53,19 @@ function regression(x, y, typ) {
     slope = (N * SXY - SX * SY) / (N * SXX - SX * SX);
     intercept = (SY - slope * SX) / N;
 
-    return [slope, intercept];
+    return { slope, intercept };
 }
 
 function linearRegression(X, Y) {
-    const ret = regression(X, Y, 'linear');
-    return [ret[0], ret[1]];
+    return regression(X, Y, 'linear');
 }
 
 function expRegression(X, Y) {
-    let ret = regression(X, Y, 'exp');
-    const base = Math.exp(ret[0]);
-    const coeff = Math.exp(ret[1]);
-    return [base, coeff];
+    let { slope, intercept } = regression(X, Y, 'exp');
+    return {
+        base: Math.exp(slope),
+        coeff: Math.exp(intercept)
+    };
 }
 
 /*
@@ -97,16 +98,16 @@ function fitData(data, type = 'linear') {
 
     if (type === 'linear') {
 
-        let ret = linearRegression(x, y);
+        const { slope, intercept } = linearRegression(x, y);
         for (let i = 0; i < x.length; i++) {
-            let res = ret[0] * x[i] + ret[1];
+            let res = slope * x[i] + intercept;
             ypred.push([x[i], res]);
         }
 
         return {
             data: ypred,
-            slope: ret[0],
-            intercept: ret[1],
+            slope,
+            intercept,
             y: function (x) {
                 return (this.slope * x) + this.intercept;
             },
@@ -117,17 +118,17 @@ function fitData(data, type = 'linear') {
     }
     if (type === 'exp' || type === 'exponential') {
 
-        let ret = expRegression(x, y);
+        const { base, coeff } = expRegression(x, y);
         for (let i = 0; i < x.length; i++) {
-            let res = ret[1] * Math.pow(ret[0], x[i]);
+            let res = coeff * Math.pow(base, x[i]);
             ypred.push([x[i], res]);
         }
         ypred.sort();
 
         return {
             data: ypred,
-            base: ret[0],
-            coeff: ret[1]
+            base,
+            coeff
         };
     }
     throw new Error(`Type ${type} is not supported by the regression module`);
