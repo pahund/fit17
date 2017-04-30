@@ -15,7 +15,7 @@ function prepareData(rawData) {
 
 module.exports = (rawData, quote) => {
     const data = prepareData(rawData);
-    Highcharts.chart('container', {
+    return Highcharts.chart('container', {
         chart: {
             type: 'spline'
         },
@@ -61,29 +61,42 @@ module.exports = (rawData, quote) => {
         },
 
         series: [{
+            data,
+            id: 'series-primary',
+            showInLegend: false,
+            color: 'rgba(0,0,0,0)'
+        }, {
             name: 'Daily Measurements',
             data,
-            id: 'primary'
-        }, {
-            name: 'Average (4 weeks)',
-            linkedTo: 'primary',
             showInLegend: true,
-            type: 'trendline',
-            algorithm: 'SMA',
-            periods: 28
+            id: 'series-daily',
+            color: '#f7d5ff'
         }, {
             name: 'Average (1 week)',
-            linkedTo: 'primary',
+            id: 'series-avg1w',
+            linkedTo: 'series-primary',
             showInLegend: true,
             type: 'trendline',
             algorithm: 'SMA',
-            periods: 7
+            periods: 7,
+            color: '#7ec2a0'
         }, {
-            name: 'Trend',
-            linkedTo: 'primary',
+            name: 'Average (4 weeks)',
+            id: 'series-avg4w',
+            linkedTo: 'series-primary',
             showInLegend: true,
             type: 'trendline',
-            algorithm: 'linear'
+            algorithm: 'SMA',
+            periods: 28,
+            color: '#b2ffd9'
+        }, {
+            name: 'Trend',
+            id: 'series-trend',
+            linkedTo: 'series-primary',
+            showInLegend: true,
+            type: 'trendline',
+            algorithm: 'linear',
+            color: '#b29866'
         }]
     });
 };

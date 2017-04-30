@@ -1,6 +1,7 @@
 const electron = require('electron');
 const readData = require('./utils/readData');
-const createTouchBarDemo = require('./utils/createTouchBarDemo');
+// const createTouchBarDemo = require('./utils/createTouchBarDemo');
+const createTouchBar = require('./utils/createTouchBar');
 
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
@@ -36,7 +37,7 @@ function createWindow() {
         win = null;
     });
 
-    win.setTouchBar(createTouchBarDemo());
+    win.setTouchBar(createTouchBar(win));
 
     win.once('ready-to-show', () => {
         win.webContents.send('data', data);
