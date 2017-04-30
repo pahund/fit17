@@ -1,5 +1,6 @@
 const ipcRenderer = require('electron').ipcRenderer;
-ipcRenderer.on('data', (event, rawData) => renderChart(rawData));
+const getInspirationalQuote = require('./utils/getInspirationalQuote');
+ipcRenderer.on('data', (event, rawData) => getInspirationalQuote().then(quote => renderChart(rawData, quote)));
 
 window.Highcharts = require('highcharts');
 require('../vendor/technical-indicators.src');
@@ -8,17 +9,17 @@ function prepareData(rawData) {
    return rawData.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)]);
 }
 
-function renderChart(rawData) {
+function renderChart(rawData, quote) {
     const data = prepareData(rawData);
     Highcharts.chart('container', {
         chart: {
             type: 'spline'
         },
         title: {
-            text: 'Weight 2017'
+            text: 'Weight'
         },
         subtitle: {
-            text: 'You can do it!'
+            text: quote
         },
         xAxis: {
             type: 'datetime',

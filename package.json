@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "electron": "^1.6.6",
-    "highcharts": "^5.0.10"
+    "highcharts": "^5.0.10",
+    "twitter-fetcher": "^16.0.3"
   }
 }
