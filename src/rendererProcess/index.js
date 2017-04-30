@@ -1,10 +1,13 @@
-const Highcharts = require('highcharts');
 const ipcRenderer = require('electron').ipcRenderer;
-ipcRenderer.on('data', function (event, data) {
-    renderChart(data);
+ipcRenderer.on('data', function (event, rawData) {
+    renderChart(rawData);
 });
 
-function renderChart(data) {
+const Highcharts = require('highcharts');
+const { fitData } = require('./utils/regression');
+
+function renderChart(rawData) {
+    const data = rawData.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)]);
     Highcharts.chart('container', {
         chart: {
             type: 'spline'
@@ -52,7 +55,14 @@ function renderChart(data) {
 
         series: [{
             name: 'Daily Measurements',
-            data: data.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)])
+            data
+        }, {
+            name: 'Trend',
+            type: 'line',
+            marker: { enabled: false },
+            data: (function() {
+                return fitData(data).data;
+            })()
         }]
     });
 }
