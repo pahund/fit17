@@ -8,7 +8,6 @@
  */
 const path = require('path');
 const { BrowserWindow } = require('electron');
-const createTouchBar = require('./createTouchBar');
 const readData = require('./readData');
 const url = require('url');
 
@@ -21,7 +20,6 @@ module.exports = () => {
         slashes: true
     }));
     // win.webContents.openDevTools();
-    win.setTouchBar(createTouchBar(win));
     win.once('ready-to-show', () => win.show());
     return win;
 };

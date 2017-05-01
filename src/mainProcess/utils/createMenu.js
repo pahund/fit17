@@ -7,6 +7,7 @@
  * @since 01 Mai 2017
  */
 const { Menu } = require("electron");
+const openFile = require('./openFile');
 
 module.exports = (app, win) => {
     const template = [{
@@ -40,7 +41,7 @@ module.exports = (app, win) => {
             label: "Open…",
             accelerator: "Command+O",
             selector: "open:",
-            click: () => console.log('PH_TODO: open dialog')
+            click: () => openFile(win)
         }, {
             label: "Close",
             accelerator: "Command+W",
