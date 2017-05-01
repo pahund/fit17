@@ -13,6 +13,8 @@
   "dependencies": {
     "electron": "^1.6.6",
     "evernote": "^2.0.1-beta",
+    "express": "^4.15.2",
+    "express-session": "^1.15.2",
     "highcharts": "^5.0.10",
     "twitter-fetcher": "^16.0.3"
   }

@@ -1,4 +1,5 @@
-const createWindow = require('./utils/createWindow');
+// const createWindow = require('./utils/createWindow');
+const evernote = require('./evernote');
 
 const { app } = require('electron');
 const path = require('path');
@@ -11,7 +12,7 @@ let win;
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-    win = createWindow();
+    win = evernote();
 
     // Emitted when the window is closed.
     win.on('closed', () => {
