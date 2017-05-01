@@ -1,4 +1,5 @@
 const createWindow = require('./utils/createWindow');
+const createMenu = require('./utils/createMenu');
 
 const { app } = require('electron');
 const path = require('path');
@@ -20,6 +21,8 @@ app.on('ready', () => {
         // when you should delete the corresponding element.
         win = null;
     });
+
+    createMenu(app, win);
 });
 
 // Quit when all windows are closed.
