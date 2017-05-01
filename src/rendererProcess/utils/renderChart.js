@@ -64,7 +64,8 @@ module.exports = (rawData, quote) => {
             data,
             id: 'series-primary',
             showInLegend: false,
-            color: 'rgba(0,0,0,0)'
+            color: 'rgba(0,0,0,0)',
+            enableMouseTracking: false
         }, {
             name: 'Daily Measurements',
             data,

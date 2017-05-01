@@ -1,33 +1,17 @@
-const electron = require('electron');
-const readData = require('./utils/readData');
-// const createTouchBarDemo = require('./utils/createTouchBarDemo');
-const createTouchBar = require('./utils/createTouchBar');
+const createWindow = require('./utils/createWindow');
 
-const { app, BrowserWindow } = require('electron');
+const { app } = require('electron');
 const path = require('path');
-const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 
-function createWindow() {
-
-    const data = readData(path.join(__dirname, '../../data.txt'));
-
-    // Create the browser window.
-    win = new BrowserWindow({ width: 800, height: 600, show: false });
-
-    // and load the index.html of the app.
-    const pathname = path.join(__dirname, '../../pages/index.html');
-    win.loadURL(url.format({
-        pathname,
-        protocol: 'file:',
-        slashes: true
-    }));
-
-    // Open the DevTools.
-    win.webContents.openDevTools();
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', () => {
+    win = createWindow();
 
     // Emitted when the window is closed.
     win.on('closed', () => {
@@ -36,19 +20,7 @@ function createWindow() {
         // when you should delete the corresponding element.
         win = null;
     });
-
-    win.setTouchBar(createTouchBar(win));
-
-    win.once('ready-to-show', () => {
-        win.webContents.send('data', data);
-        win.show();
-    })
-}
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -67,5 +39,4 @@ app.on('activate', () => {
     }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+
