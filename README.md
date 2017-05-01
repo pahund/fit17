@@ -11,6 +11,18 @@ Weight monitoring desktop application.
 
     npm install
     
+After installing, create a file *credentials.json* in the project's root dir that contains your Evernote
+API key like this:
+
+```
+{
+  "key": "API-KEY",
+  "secret": "API-SECRET"
+}
+```
+
+(obviously, you replace the values with actual key, secret)
+
 ## How to Run
 
     npm start
