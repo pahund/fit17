@@ -55,9 +55,12 @@ class Inactive extends TouchBarButton {
     }
 }
 
-module.exports = win => new TouchBar([
-    new Toggle('Daily', 'series-daily', win),
-    new Toggle('Avg. 1w', 'series-avg1w', win),
-    new Toggle('Avg. 4w', 'series-avg4w', win),
-    new Toggle('Trend', 'series-trend', win)
-]);
+module.exports = win => {
+    const touchBar = new TouchBar([
+        new Toggle('Daily', 'series-daily', win),
+        new Toggle('Avg. 1w', 'series-avg1w', win),
+        new Toggle('Avg. 4w', 'series-avg4w', win),
+        new Toggle('Trend', 'series-trend', win)
+    ]);
+    win.setTouchBar(touchBar);
+};

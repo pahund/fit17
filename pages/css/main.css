@@ -1,0 +1,15 @@
+body {
+    font-family: Helvetica Neue, sans-serif;
+}
+
+#container {
+    width: 100%;
+    height: calc(100vh - 20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.splash {
+    max-width: 50%;
+}

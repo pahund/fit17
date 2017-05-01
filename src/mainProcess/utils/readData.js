@@ -14,13 +14,14 @@ const matchDateStr = `${matchMonthStr} ${matchDayStr}, ${matchYearStr}`;
 const matchTimeStr = `${matchHoursStr}:${matchMinutesStr}`;
 const matchDateTimeStr = `${matchDateStr} ${matchTimeStr}`;
 const matchCommentStr = '[^0-9]*';
+const dateMatcher = new RegExp(
+    `(${matchMonthStr}) (${matchDayStr}), (${matchYearStr}) (${matchHoursStr}):(${matchMinutesStr})`
+);
+const entryMatcher = new RegExp(`^(${matchWeightStr}); (${matchDateTimeStr});(${matchCommentStr})$`);
 
 function convertDate(str) {
-    const dateMatcher = new RegExp(
-        `(${matchMonthStr}) (${matchDayStr}), (${matchYearStr}) (${matchHoursStr}):(${matchMinutesStr})`
-    );
 
-    const [ , , monthStr, dayStr, yearStr, hStr, minStr ] = str.match(dateMatcher);
+    const [, , monthStr, dayStr, yearStr, hStr, minStr] = str.match(dateMatcher);
     const month = monthNames.indexOf(monthStr);
     const day = parseInt(dayStr, 10);
     const year = parseInt(yearStr, 10);
@@ -33,24 +34,48 @@ function convertWeight(str) {
     return parseFloat(str.replace(',', '.'));
 }
 
-module.exports = (path) => {
-    const entryMatcher = new RegExp(`${matchWeightStr}; ${matchDateTimeStr};${matchCommentStr}`, 'g');
-
-    const text = fs.readFileSync(path, { encoding: 'utf8' }).trim();
-
-    const weightMatcher = new RegExp(`^${matchWeightStr}`);
-    const dateMatcher = new RegExp(matchDateTimeStr);
-    const commentMatcher = new RegExp(`;(${matchCommentStr})$`);
-    return text.match(entryMatcher).map(entryStr => {
-        const commentStr = entryStr.match(commentMatcher)[1].trim();
-        const weightStr = entryStr.match(weightMatcher)[0];
-        const dateStr = entryStr.match(dateMatcher)[0];
-        convertDate(dateStr);
+function convertEntries(entries) {
+    return entries.map(entry => {
+        const matches = entry.match(entryMatcher);
+        if (!matches) {
+            throw new Error(`Invalid entry “${entry}”`);
+        }
+        const [, weight, date, comment] = matches;
         return {
-            weight: convertWeight(weightStr),
-            date: convertDate(dateStr),
-            comment: commentStr.length > 0 ? commentStr : null
+            weight: convertWeight(weight),
+            date: convertDate(date),
+            comment: comment.length > 0 ? comment : null
         };
     });
+}
+
+module.exports = (path) => {
+    const text = fs.readFileSync(path, { encoding: 'utf8' }).trim();
+
+    if (text.length === 0) {
+        console.error(`No contents found in input file “${path}”`);
+        return null;
+    }
+
+    const lines = text.split('\n');
+
+    if (lines.length < 4) {
+        console.error(`less than 4 lines in input file ${path}`);
+        return null;
+    }
+
+    const [header1, header2, , ...entries] = lines;
+
+    if (!header1.startsWith('Startgewicht:') || !header2.startsWith('Zielgewicht:')) {
+        console.error(`No header lines found in input file “${path}”`);
+        return null;
+    }
+
+    try {
+        return convertEntries(entries);
+    } catch (error) {
+        console.error(`Error reading input file “${path}”: ${error.message}`);
+        return null;
+    }
 };
 
