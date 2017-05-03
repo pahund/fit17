@@ -41,7 +41,13 @@ module.exports = () => {
         if (config.path) {
             const data = readData(config.path);
             if (data) {
-                win.webContents.send('data', data);
+                win.webContents.send('chart', {
+                    data,
+                    daily: config.daily,
+                    avg1w: config.avg1w,
+                    avg4w: config.avg4w,
+                    trend: config.trend
+                });
             }
         }
         win.show();

@@ -8,6 +8,8 @@
  */
 const { TouchBar } = require('electron');
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
+const loadConfig = require('../config/loadConfig');
+const updateConfig = require('../config/updateConfig');
 
 const ICON_ACTIVE = '✔';
 const ICON_INACTIVE = '𐄂';
@@ -21,9 +23,10 @@ class Toggle extends TouchBarButton {
             backgroundColor: active ? COLOR_ACTIVE : COLOR_INACTIVE,
             click: () => this.toggle()
         });
-        this.active = true;
+        this.active = active;
         this.labelText = labelText;
         this.chartId = chartId;
+        this.configId = chartId.substr(chartId.indexOf('-') + 1);
         this.win = win;
     }
 
@@ -35,6 +38,7 @@ class Toggle extends TouchBarButton {
             id: this.chartId,
             active: this.active
         });
+        updateConfig({ [this.configId]: this.active });
     }
 }
 class Active extends TouchBarButton {
@@ -56,11 +60,20 @@ class Inactive extends TouchBarButton {
 }
 
 module.exports = win => {
+    let daily = true;
+    let avg1w = true;
+    let avg4w = true;
+    let trend = true;
+    const config = loadConfig();
+    if (config) {
+        ({ daily, avg1w, avg4w, trend } = config);
+    }
+
     const touchBar = new TouchBar([
-        new Toggle('Daily', 'series-daily', win),
-        new Toggle('Avg. 1w', 'series-avg1w', win),
-        new Toggle('Avg. 4w', 'series-avg4w', win),
-        new Toggle('Trend', 'series-trend', win)
+        new Toggle('Daily', 'series-daily', win, daily),
+        new Toggle('Avg. 1w', 'series-avg1w', win, avg1w),
+        new Toggle('Avg. 4w', 'series-avg4w', win, avg4w),
+        new Toggle('Trend', 'series-trend', win, trend)
     ]);
     win.setTouchBar(touchBar);
 };

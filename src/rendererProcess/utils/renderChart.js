@@ -13,8 +13,8 @@ function prepareData(rawData) {
     return rawData.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)]);
 }
 
-module.exports = (rawData, quote) => {
-    const data = prepareData(rawData);
+module.exports = (chart, quote) => {
+    const data = prepareData(chart.data);
     return Highcharts.chart('container', {
         chart: {
             type: 'spline'
@@ -71,7 +71,8 @@ module.exports = (rawData, quote) => {
             data,
             showInLegend: true,
             id: 'series-daily',
-            color: '#f7d5ff'
+            color: '#f7d5ff',
+            visible: chart.daily
         }, {
             name: 'Average (1 week)',
             id: 'series-avg1w',
@@ -80,7 +81,8 @@ module.exports = (rawData, quote) => {
             type: 'trendline',
             algorithm: 'SMA',
             periods: 7,
-            color: '#7ec2a0'
+            color: '#7ec2a0',
+            visible: chart.avg1w
         }, {
             name: 'Average (4 weeks)',
             id: 'series-avg4w',
@@ -89,7 +91,8 @@ module.exports = (rawData, quote) => {
             type: 'trendline',
             algorithm: 'SMA',
             periods: 28,
-            color: '#b2ffd9'
+            color: '#b2ffd9',
+            visible: chart.avg4w
         }, {
             name: 'Trend',
             id: 'series-trend',
@@ -97,7 +100,8 @@ module.exports = (rawData, quote) => {
             showInLegend: true,
             type: 'trendline',
             algorithm: 'linear',
-            color: '#b29866'
+            color: '#b29866',
+            visible: chart.trend
         }]
     });
 };

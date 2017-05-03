@@ -16,10 +16,10 @@ const splashTimeout = setTimeout(() => {
     `;
 }, 1000);
 
-ipcRenderer.on('data', async (event, rawData) => {
+ipcRenderer.on('chart', async (event, chartData) => {
     clearTimeout(splashTimeout);
     const quote = await getInspirationalQuote();
-    chart = renderChart(rawData, quote);
+    chart = renderChart(chartData, quote);
 });
 
 ipcRenderer.on('toggle', (event, { id, active }) => {

@@ -10,6 +10,7 @@ const { dialog } = require("electron");
 const readData = require('./readData');
 const isBinaryFile = require('isbinaryfile');
 const createTouchBar = require('./createTouchBar');
+const loadConfig = require('../config/loadConfig');
 const updateConfig = require('../config/updateConfig');
 
 function showError() {
@@ -35,7 +36,21 @@ module.exports = win => {
         showError();
         return;
     }
-    win.webContents.send('data', data);
+    let daily = true;
+    let avg1w = true;
+    let avg4w = true;
+    let trend = true;
+    const config = loadConfig();
+    if (config) {
+        ({ daily, avg1w, avg4w, trend } = config);
+    }
+    win.webContents.send('chart', {
+        data,
+        daily,
+        avg1w,
+        avg4w,
+        trend
+    });
     updateConfig({ path });
     createTouchBar(win);
 };

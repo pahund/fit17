@@ -17,5 +17,6 @@ app.on('ready', () => {
         app.quit();
     });
     createMenu(app, win);
+    createTouchBar(win);
 });
 
