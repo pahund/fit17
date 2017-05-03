@@ -10,9 +10,26 @@ const path = require('path');
 const { BrowserWindow } = require('electron');
 const readData = require('./readData');
 const url = require('url');
+const loadConfig = require('../config/loadConfig');
 
 module.exports = () => {
-    const win = new BrowserWindow({ width: 800, height: 600, show: false });
+    let config = loadConfig();
+
+    if (!config) {
+        config = {
+            width: 800,
+            height: 600
+        };
+    }
+    const win = new BrowserWindow({
+        minWidth: 400,
+        minHeight: 300,
+        width: config.width,
+        height: config.height,
+        x: config.x,
+        y: config.y,
+        show: false
+    });
     const pathname = path.join(__dirname, '../../../pages/index.html');
     win.loadURL(url.format({
         pathname,
@@ -20,6 +37,18 @@ module.exports = () => {
         slashes: true
     }));
     // win.webContents.openDevTools();
-    win.once('ready-to-show', () => win.show());
+    win.once('ready-to-show', () => {
+        if (config.path) {
+            const data = readData(config.path);
+            if (data) {
+                win.webContents.send('data', data);
+            }
+        }
+        win.show();
+        win.focus();
+        if (config.fullscreen) {
+            win.setFullScreen(true);
+        }
+    });
     return win;
 };

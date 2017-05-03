@@ -40,7 +40,6 @@ module.exports = (app, win) => {
         submenu: [{
             label: "Open…",
             accelerator: "Command+O",
-            selector: "open:",
             click: () => openFile(win)
         }, {
             label: "Close",

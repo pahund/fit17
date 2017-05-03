@@ -4,7 +4,20 @@ const renderChart = require('./utils/renderChart');
 
 let chart;
 
+const splashTimeout = setTimeout(() => {
+    const container = document.getElementById('container');
+    container.innerHTML = `
+        <div class="splash">
+            <p>
+                To get started, use <em>File → Open…</em> to load a file<br>
+                with weight data exported from the “Monitor Your Weight” app.
+            </p>
+        </div>
+    `;
+}, 1000);
+
 ipcRenderer.on('data', async (event, rawData) => {
+    clearTimeout(splashTimeout);
     const quote = await getInspirationalQuote();
     chart = renderChart(rawData, quote);
 });

@@ -10,6 +10,7 @@ const { dialog } = require("electron");
 const readData = require('./readData');
 const isBinaryFile = require('isbinaryfile');
 const createTouchBar = require('./createTouchBar');
+const updateConfig = require('../config/updateConfig');
 
 function showError() {
     dialog.showMessageBox({
@@ -20,7 +21,7 @@ function showError() {
     });
 }
 module.exports = win => {
-    const paths = dialog.showOpenDialog({properties: ['openFile']})
+    const paths = dialog.showOpenDialog({properties: ['openFile']});
     if (!paths) {
         return;
     }
@@ -35,5 +36,6 @@ module.exports = win => {
         return;
     }
     win.webContents.send('data', data);
+    updateConfig({ path });
     createTouchBar(win);
 };
