@@ -13,6 +13,7 @@ const path = require('path');
 const options = {
     dir: path.resolve(__dirname, '../..'),
     out: path.resolve(__dirname, '../../dist'),
+    icon: path.resolve(__dirname, '../../assets/fit17-logo.icns'),
     overwrite: true,
     appCopyright: 'Copyright © 2017 Patrick Hund'
 };
@@ -22,6 +23,6 @@ packager(options, (err, appPaths) => {
         console.error('Build failed!', err);
         process.exit(1);
     }
-    console.log('Build successful!', appPaths);
+    console.log('Build successful!');
 });
 
