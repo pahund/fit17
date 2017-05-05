@@ -8,6 +8,7 @@
  */
 window.Highcharts = require('highcharts');
 require('../../vendor/technical-indicators.src');
+const { ipcRenderer } = require('electron');
 
 function prepareData(rawData) {
     return rawData.map(curr => [new Date(curr.date).getTime(), parseFloat(curr.weight)]);
@@ -56,6 +57,13 @@ module.exports = (chart, quote) => {
             spline: {
                 marker: {
                     enabled: true
+                }
+            },
+            series: {
+                events: {
+                    legendItemClick() {
+                        ipcRenderer.send('update-touch-bar', this.options.id, !this.visible);
+                    }
                 }
             }
         },

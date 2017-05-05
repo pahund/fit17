@@ -6,7 +6,7 @@
  * @author <a href="mailto:pahund@team.mobile.de">Patrick Hund</a>
  * @since 30 Apr 2017
  */
-const { TouchBar } = require('electron');
+const { TouchBar, ipcMain } = require('electron');
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
 const loadConfig = require('../config/loadConfig');
 const updateConfig = require('../config/updateConfig');
@@ -16,6 +16,8 @@ const ICON_INACTIVE = '𐄂';
 const COLOR_ACTIVE = '#626262';
 const COLOR_INACTIVE = '#373737';
 
+const active = Symbol('private property “active”');
+
 class Toggle extends TouchBarButton {
     constructor(labelText, chartId, win, active = true) {
         super({
@@ -23,7 +25,7 @@ class Toggle extends TouchBarButton {
             backgroundColor: active ? COLOR_ACTIVE : COLOR_INACTIVE,
             click: () => this.toggle()
         });
-        this.active = active;
+        this[active] = active;
         this.labelText = labelText;
         this.chartId = chartId;
         this.configId = chartId.substr(chartId.indexOf('-') + 1);
@@ -31,14 +33,18 @@ class Toggle extends TouchBarButton {
     }
 
     toggle() {
-        this.active = !this.active;
-        this.label = `${this.active ? ICON_ACTIVE : ICON_INACTIVE} ${this.labelText}`;
-        this.backgroundColor = this.active ? COLOR_ACTIVE : COLOR_INACTIVE;
+        this.active = !this[active];
+    }
+
+    set active(nextActive) {
+        this[active] = nextActive;
+        this.label = `${this[active] ? ICON_ACTIVE : ICON_INACTIVE} ${this.labelText}`;
+        this.backgroundColor = this[active] ? COLOR_ACTIVE : COLOR_INACTIVE;
         this.win.webContents.send('toggle', {
             id: this.chartId,
-            active: this.active
+            active: this[active]
         });
-        updateConfig({ [this.configId]: this.active });
+        updateConfig({ [this.configId]: this[active] });
     }
 }
 class Active extends TouchBarButton {
@@ -69,11 +75,13 @@ module.exports = win => {
         ({ daily, avg1w, avg4w, trend } = config);
     }
 
-    const touchBar = new TouchBar([
-        new Toggle('Daily', 'series-daily', win, daily),
-        new Toggle('Avg. 1w', 'series-avg1w', win, avg1w),
-        new Toggle('Avg. 4w', 'series-avg4w', win, avg4w),
-        new Toggle('Trend', 'series-trend', win, trend)
-    ]);
-    win.setTouchBar(touchBar);
+    const buttons = {
+        'series-daily': new Toggle('Daily', 'series-daily', win, daily),
+        'series-avg1w': new Toggle('Avg. 1w', 'series-avg1w', win, avg1w),
+        'series-avg4w': new Toggle('Avg. 4w', 'series-avg4w', win, avg4w),
+        'series-trend': new Toggle('Trend', 'series-trend', win, trend)
+    };
+
+    win.setTouchBar(new TouchBar(Object.keys(buttons).map(id => buttons[id])));
+    ipcMain.on('update-touch-bar', (event, id, visible) => buttons[id].active = visible);
 };
