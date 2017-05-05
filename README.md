@@ -17,4 +17,4 @@ Weight monitoring desktop application.
 
 ## License
 
-Copyright (C) 2017 Patrick Hund ([MIT](LICENSE))
+Copyright © 2017 Patrick Hund ([MIT](LICENSE))

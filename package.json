@@ -1,10 +1,11 @@
 {
   "name": "fit17",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Weight monitoring desktop application",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "build": "node ./src/build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/pahund/fit17",
@@ -12,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "electron": "^1.6.6",
+    "electron-packager": "^8.7.0",
     "evernote": "^2.0.1-beta",
     "highcharts": "^5.0.10",
     "isbinaryfile": "^3.0.2",

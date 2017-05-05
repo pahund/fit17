@@ -30,7 +30,7 @@ module.exports = () => {
         y: config.y,
         show: false
     });
-    const pathname = path.join(__dirname, '../../../pages/index.html');
+    const pathname = path.join(__dirname, '../../../static/index.html');
     win.loadURL(url.format({
         pathname,
         protocol: 'file:',

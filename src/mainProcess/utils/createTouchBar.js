@@ -7,7 +7,7 @@
  * @since 30 Apr 2017
  */
 const { TouchBar, ipcMain } = require('electron');
-const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
+const { TouchBarButton } = TouchBar;
 const loadConfig = require('../config/loadConfig');
 const updateConfig = require('../config/updateConfig');
 
@@ -16,7 +16,7 @@ const ICON_INACTIVE = '𐄂';
 const COLOR_ACTIVE = '#626262';
 const COLOR_INACTIVE = '#373737';
 
-const active = Symbol('private property “active”');
+const ACTIVE = Symbol('private property “active”');
 
 class Toggle extends TouchBarButton {
     constructor(labelText, chartId, win, active = true) {
@@ -25,7 +25,7 @@ class Toggle extends TouchBarButton {
             backgroundColor: active ? COLOR_ACTIVE : COLOR_INACTIVE,
             click: () => this.toggle()
         });
-        this[active] = active;
+        this[ACTIVE] = active;
         this.labelText = labelText;
         this.chartId = chartId;
         this.configId = chartId.substr(chartId.indexOf('-') + 1);
@@ -33,35 +33,22 @@ class Toggle extends TouchBarButton {
     }
 
     toggle() {
-        this.active = !this[active];
+        this.active = !this[ACTIVE];
     }
 
     set active(nextActive) {
-        this[active] = nextActive;
-        this.label = `${this[active] ? ICON_ACTIVE : ICON_INACTIVE} ${this.labelText}`;
-        this.backgroundColor = this[active] ? COLOR_ACTIVE : COLOR_INACTIVE;
+        this[ACTIVE] = nextActive;
+        this.label = `${this.active ? ICON_ACTIVE : ICON_INACTIVE} ${this.labelText}`;
+        this.backgroundColor = this.active ? COLOR_ACTIVE : COLOR_INACTIVE;
         this.win.webContents.send('toggle', {
             id: this.chartId,
-            active: this[active]
+            active: this.active
         });
-        updateConfig({ [this.configId]: this[active] });
+        updateConfig({ [this.configId]: this.active });
     }
-}
-class Active extends TouchBarButton {
-    constructor(label) {
-        super({
-            label: `✔ ${label}`,
-            backgroundColor: '#626262'
-        });
-    }
-}
 
-class Inactive extends TouchBarButton {
-    constructor(label) {
-        super({
-            label: `𐄂 ${label}`,
-            backgroundColor: '#373737'
-        });
+    get active() {
+        return this[ACTIVE];
     }
 }
 
