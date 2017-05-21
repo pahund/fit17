@@ -1,6 +1,6 @@
 {
   "name": "fit17",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Weight monitoring desktop application",
   "main": "main.js",
   "scripts": {
