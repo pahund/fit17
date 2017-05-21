@@ -36,7 +36,7 @@ module.exports = () => {
         protocol: 'file:',
         slashes: true
     }));
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
     win.once('ready-to-show', () => {
         if (config.path) {
             const data = readData(config.path);

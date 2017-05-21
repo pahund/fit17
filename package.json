@@ -17,6 +17,6 @@
     "evernote": "^2.0.1-beta",
     "highcharts": "^5.0.10",
     "isbinaryfile": "^3.0.2",
-    "twitter-fetcher": "^16.0.3"
+    "twitter-fetcher": "^17.0.0"
   }
 }
